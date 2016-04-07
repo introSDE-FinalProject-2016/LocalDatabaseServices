@@ -5,9 +5,7 @@
     	<class>introsde.finalproject.soap.model.Measure</class>
     	<class>introsde.finalproject.soap.model.MeasureDefinition</class>
     	<class>introsde.finalproject.soap.model.Goal</class>
-    	<class>introsde.finalproject.soap.model.GoalDefinition</class>
-    	<class>introsde.finalproject.soap.model.Reminder</class>
-		<!--  <class>introsde.finalproject.soap.converter.DateConverter</class>-->
+    	<class>introsde.finalproject.soap.converter.DateConverter</class>
         <properties>
             <!-- Scan for annotated classes and Hibernate mapping XML files -->
             <property name="hibernate.archive.autodetection" value="class, hbm"/>
@@ -16,7 +14,7 @@
             <property name="javax.persistence.jdbc.driver" value="org.sqlite.JDBC" />
             
             <!-- the last part of the URL is the path to the sqlite file of the db -->
-            <property name="javax.persistence.jdbc.url" value="jdbc:sqlite:lifecoach.sqlite" />
+            <property name="javax.persistence.jdbc.url" value="jdbc:sqlite:lifeCoach.sqlite" />
             
             <!-- set it to ALL to see all the JPA related debugging information -->
             <property name="eclipselink.logging.level" value="INFO" />
