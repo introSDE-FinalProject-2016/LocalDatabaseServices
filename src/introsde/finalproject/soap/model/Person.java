@@ -34,166 +34,138 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 	/*@NamedQuery(name="Person.currentHealth", query="SELECT m FROM Measure m "
 			+ "WHERE m.person = ?1 "
 			+ "GROUP BY m.measureDefinition "
-			+ "HAVING m.dateRegistered = MAX(m.dateRegistered)"),*/
-	@NamedQuery(name="Person.currentHealth",
-		query="SELECT m FROM Measure m WHERE m.dateRegistered IN (SELECT MAX(h.dateRegistered) FROM Measure h WHERE h.person = ?1 GROUP BY h.measureDefinition)")
+			+ "HAVING m.timestamp = MAX(m.timestamp)"),*/
+	@NamedQuery(name="Person.currentHealth", query="SELECT m FROM Measure m WHERE m.timestamp IN "
+			+ "(SELECT MAX(h.timestamp) FROM Measure h WHERE h.person = ?1 GROUP BY h.measureDefinition)")
 })
-//@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder={"idPerson", "firstname", "lastname" , "birthdate", "username", "password", "email", "measures"})
+@XmlType(propOrder={"idPerson", "firstname", "lastname" , "birthdate", "email", "gender", "measure", "goal"})
+@XmlAccessorType(XmlAccessType.NONE)
 public class Person implements Serializable{
 
 	private static final long serialVersionUID = 6936073577820155714L;
 
 	@Id
 	@GeneratedValue(generator="sqlite_person")
-	@TableGenerator(name="sqlite_person", table="sequence", 
+	@TableGenerator(name="sqlite_person", table="sqlite_sequence", 
 		pkColumnName="name", valueColumnName="seq",
-		pkColumnValue="Person",
-		initialValue=1, allocationSize=1)
+		pkColumnValue="Person")
 	@Column(name="idPerson")
 	private int idPerson;
 	
-	@Column(name="firstname", nullable=false)
+	@Column(name="firstname")
 	private String firstname;
 	
-	@Column(name="lastname", nullable=false)
+	@Column(name="lastname")
 	private String lastname;
 	
 	@Temporal(TemporalType.DATE)
-	@Column(name="birthdate", nullable=false)
+	@Column(name="birthdate")
+	//@Convert(converter = DateConverter.class)
+	//@XmlJavaTypeAdapter(DateAdapter.class)
 	private Date birthdate;
 	
-	@Column(name="username", nullable=false)
-	private String username;
-	
-	@Column(name="password", nullable=false)
-	private String password;
-	
-	@Column(name="email", nullable=false)
+	@Column(name="email")
 	private String email;
 	
-	//mappedBy must be equal to the name of the attribute in Measure that maps this relation
-	@OneToMany(mappedBy="person", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
-	private List<Measure> measures;
+	@Column(name="gender")
+    private String gender;
 	
 	//mappedBy must be equal to the name of the attribute in Measure that maps this relation
 	@OneToMany(mappedBy="person", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
-	private List<Goal> goals;
+	private List<Measure> measure;
 	
-	//mappedBy must be equal to the name of the attribute in Measure that maps this relation
+	//mappedBy must be equal to the name of the attribute in Goal that maps this relation
 	@OneToMany(mappedBy="person", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
-	private List<Reminder> reminders;
+	private List<Goal> goal;
 	
-	//constructor person class
-	public Person(){}
-	
-	//getters and setters methods
-	@XmlElement(name="pid")
+	// Constructor person class
+	public Person(){
+	}
+
+	// Getters methods
+	@XmlElement
 	public int getIdPerson() {
 		return idPerson;
 	}
-	
-	public void setIdPerson(int idPerson) {
-		this.idPerson = idPerson;
-	}
-	
+
 	@XmlElement
 	public String getFirstname() {
 		return firstname;
 	}
-	
-	public void setFirstname(String firstname) {
-		this.firstname = firstname;
-	}
-	
+
 	@XmlElement
 	public String getLastname() {
 		return lastname;
 	}
-	
-	public void setLastname(String lastname) {
-		this.lastname = lastname;
-	}
-	
+
 	@XmlElement
-	//@Convert(converter = DateConverter.class)
-	//@XmlJavaTypeAdapter(DateAdapter.class)
-	public String getBirthdate() {
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        return df.format(this.birthdate);
+	public Date getBirthdate() {
+		return birthdate;
 	}
-	
-	public void setBirthdate(String birthdate) throws ParseException{
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-        Date date = format.parse(birthdate);
-        this.birthdate = date;
-    }
-	
-	@XmlElement
-	public String getUsername() {
-		return username;
-	}
-	
-	public void setUsername(String username) {
-		this.username = username;
-	}
-	
-	@XmlElement
-	public String getPassword() {
-		return password;
-	}
-	
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	
+
 	@XmlElement
 	public String getEmail() {
 		return email;
 	}
-	
+
+	@XmlElement
+	public String getGender() {
+		return gender;
+	}
+
+	@XmlElementWrapper(name = "currentHealth")
+	@XmlElement(name = "measure")
+	public List<Measure> getMeasure() {
+		//return measure;
+		return this.getQueryCurrentHealth();
+	}
+
+	@XmlElementWrapper(name = "goals")
+	@XmlElement(name = "goal")
+	public List<Goal> getGoal() {
+		return goal;
+	}
+
+	// Setters methods
+	public void setIdPerson(int idPerson) {
+		this.idPerson = idPerson;
+	}
+
+	public void setFirstname(String firstname) {
+		this.firstname = firstname;
+	}
+
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
+	}
+
+	public void setBirthdate(Date birthdate) {
+		this.birthdate = birthdate;
+	}
+
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
-	// the XmlElementWrapper defines the name of node in which the list of Measure elements
-    // will be inserted
-    @XmlElementWrapper(name = "currentHealthProfile")
-    @XmlElement(name="measure")
-	public List<Measure> getMeasures() {
-		//return measures;
-    	return this.getCurrentHealthById();
+
+	public void setGender(String gender) {
+		this.gender = gender;
 	}
-	
-	public void setMeasures(List<Measure> measures) {
-		this.measures = measures;
+
+	public void setMeasure(List<Measure> measure) {
+		this.measure = measure;
 	}
-	
-	@XmlTransient
-	public List<Goal> getGoals() {
-		return goals;
-	}
-	
-	public void setGoals(List<Goal> goals) {
-		this.goals = goals;
-	}
-	
-	@XmlTransient
-	public List<Reminder> getReminders() {
-		return reminders;
-	}
-	
-	public void setReminders(List<Reminder> reminders) {
-		this.reminders = reminders;
+
+	public void setGoal(List<Goal> goal) {
+		this.goal = goal;
 	}
 	
 	public String toString() {
-		return "Person ( " + idPerson + " " + firstname + " " + lastname + " "
-				+ birthdate + " " + username + " " + password + " " + email + " )";
+		return "Person ( " + idPerson + ", " + firstname + ", " + lastname + ", "
+				+ birthdate + ", " + email + ", " + gender + " )";
 	}
 	
-	//Database Query Operations
-	public static Person getPersonById(int idPerson) {
+	// Database operations 
+    public static Person getPersonById(int idPerson) {
         EntityManager em = LifeCoachDao.instance.createEntityManager();
         em.getEntityManagerFactory().getCache().evictAll();
         Person p = em.find(Person.class, idPerson);
@@ -205,24 +177,10 @@ public class Person implements Serializable{
         EntityManager em = LifeCoachDao.instance.createEntityManager();
         em.getEntityManagerFactory().getCache().evictAll();
         List<Person> list = em.createNamedQuery("Person.findAll", Person.class).getResultList();
-        for(Person p: list){
-        	System.out.println(p.toString());
-        }
         LifeCoachDao.instance.closeConnections(em);
         return list;
     }
     
-    public List<Measure> getCurrentHealthById(){
-    	EntityManager em = LifeCoachDao.instance.createEntityManager();
-        em.getEntityManagerFactory().getCache().evictAll();
-        List<Measure> list = em.createNamedQuery("Person.currentHealth", Measure.class)
-        		.setParameter(1, this)
-        		.getResultList();
-        LifeCoachDao.instance.closeConnections(em);
-        return list;
-    }
-    
-    //Database TRANSACTIONS Operations - CRUD
     public static Person savePerson(Person p) {
         EntityManager em = LifeCoachDao.instance.createEntityManager();
         EntityTransaction tx = em.getTransaction();
@@ -253,4 +211,13 @@ public class Person implements Serializable{
         LifeCoachDao.instance.closeConnections(em);
     }  
 
+    public List<Measure> getQueryCurrentHealth() {
+		EntityManager em = LifeCoachDao.instance.createEntityManager();
+	    List<Measure> list = em.createNamedQuery("Person.currentHealth", Measure.class)
+	    		.setParameter(1, this)
+	    		.getResultList();
+	    LifeCoachDao.instance.closeConnections(em);
+	    return list;
+	}
+    
 }

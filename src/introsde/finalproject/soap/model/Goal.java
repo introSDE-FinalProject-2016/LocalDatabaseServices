@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
@@ -20,90 +22,132 @@ import javax.xml.bind.annotation.XmlType;
 
 @Entity
 @Table(name = "Goal")
-@NamedQueries({ @NamedQuery(name = "Goal.findAll", query = "SELECT g FROM Goal g"), })
-@XmlType(propOrder = { "idGoal", "goalDefinition", "value", "dateRegistered" })
+@NamedQueries({ @NamedQuery(name = "Goal.findAll", query = "SELECT g FROM Goal g") })
+@XmlType(propOrder={"idGoal", "type", "value" , "startDateGoal", "endDateGoal", "achieved"})
+@XmlAccessorType(XmlAccessType.NONE)
 public class Goal implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(generator = "sqlite_goal")
-	@TableGenerator(name = "sqlite_goal", table = "sequence", pkColumnName = "name", valueColumnName = "seq", pkColumnValue = "Goal", initialValue = 1, allocationSize = 1)
+	@TableGenerator(name = "sqlite_goal", table = "sqlite_sequence", 
+		pkColumnName = "name", valueColumnName = "seq", 
+		pkColumnValue = "Goal")
 	@Column(name = "idGoal")
 	private int idGoal;
 
 	@Column(name = "value")
 	private int value;
 
-	@Temporal(TemporalType.DATE)
-	@Column(name = "dateRegistered")
-	private Date dateRegistered;
+	@Column(name = "type")
+	private String type;
 
-	@ManyToOne
-	@JoinColumn(name = "idGoalDefinition", referencedColumnName = "idGoalDefinition")
-	private GoalDefinition goalDefinition;
+	@Temporal(TemporalType.DATE)
+	@Column(name = "startDateGoal")
+	private Date startDateGoal;
+
+	@Temporal(TemporalType.DATE)
+	@Column(name = "endDateGoal")
+	private Date endDateGoal;
+
+	@Column(name = "achieved")
+	private Boolean achieved;
 
 	@ManyToOne
 	@JoinColumn(name = "idPerson", referencedColumnName = "idPerson")
 	private Person person;
 
-	// constructor goal class
+	@ManyToOne
+	@JoinColumn(name = "idMeasureDefinition", referencedColumnName = "idMeasureDefinition")
+	private MeasureDefinition measureDefinition;
+
+	// Constructor goal class
 	public Goal() {
 	}
 
-	// getters and setters methods
-	@XmlElement(name = "gid")
+	// Getters methods
+	@XmlElement
 	public int getIdGoal() {
 		return idGoal;
 	}
 
-	public void setIdGoal(int idGoal) {
-		this.idGoal = idGoal;
-	}
-
-	@XmlElement(name = "value")
+	@XmlElement(name="goalValue")
 	public int getValue() {
 		return value;
 	}
 
-	public void setValue(int value) {
-		this.value = value;
+	@XmlElement(name="goalType")
+	public String getType() {
+		return type;
 	}
 
-	@XmlElement(name = "created")
-	public Date getDateRegistered() {
-		return dateRegistered;
+	@XmlElement
+	public Date getStartDateGoal() {
+		return startDateGoal;
 	}
 
-	public void setDateRegistered(Date dateRegistered) {
-		this.dateRegistered = dateRegistered;
+	@XmlElement
+	public Date getEndDateGoal() {
+		return endDateGoal;
 	}
 
-	@XmlElement(name = "goalDefinition")
-	public GoalDefinition getGoalDefinition() {
-		return goalDefinition;
+	@XmlElement
+	public Boolean getAchieved() {
+		return achieved;
 	}
 
-	public void setGoalDefinition(GoalDefinition goalDefinition) {
-		this.goalDefinition = goalDefinition;
-	}
-
-	// we make this transient for JAXB to avoid and infinite loop on
+	// We make this transient for JAXB to avoid and infinite loop on
 	// serialization
 	@XmlTransient
 	public Person getPerson() {
 		return person;
 	}
 
+	public MeasureDefinition getMeasureDefinition() {
+		return measureDefinition;
+	}
+
+	// Setters methods
+	public void setIdGoal(int idGoal) {
+		this.idGoal = idGoal;
+	}
+
+	public void setValue(int value) {
+		this.value = value;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public void setStartDateGoal(Date startDateGoal) {
+		this.startDateGoal = startDateGoal;
+	}
+
+	public void setEndDateGoal(Date endDateGoal) {
+		this.endDateGoal = endDateGoal;
+	}
+
+	public void setAchieved(Boolean achieved) {
+		this.achieved = achieved;
+	}
+
 	public void setPerson(Person person) {
 		this.person = person;
 	}
 
-	public String toString() {
-		return "Goal ( " + idGoal + " " + value + " " + dateRegistered + " )";
+	public void setMeasureDefinition(MeasureDefinition measureDefinition) {
+		this.measureDefinition = measureDefinition;
 	}
 
-	// Database Query Operations
+	public String toString() {
+		return "Goal ( " + idGoal + ", " + value + ", "
+				+ type + ", " + startDateGoal + ", " 
+				+ endDateGoal + ", "+ achieved + " )";
+	}
+	
+	// Database operations
 	public static Goal getGoalById(int idGoal) {
 		EntityManager em = LifeCoachDao.instance.createEntityManager();
 		em.getEntityManagerFactory().getCache().evictAll();
@@ -115,13 +159,12 @@ public class Goal implements Serializable {
 	public static List<Goal> getAll() {
 		EntityManager em = LifeCoachDao.instance.createEntityManager();
 		em.getEntityManagerFactory().getCache().evictAll();
-		List<Goal> list = em.createNamedQuery("Goal.findAll",
-				Goal.class).getResultList();
+		List<Goal> list = em.createNamedQuery("Goal.findAll", Goal.class)
+				.getResultList();
 		LifeCoachDao.instance.closeConnections(em);
 		return list;
 	}
 
-	// Database TRANSACTIONS Operations - CRUD
 	public static Goal saveGoal(Goal g) {
 		EntityManager em = LifeCoachDao.instance.createEntityManager();
 		EntityTransaction tx = em.getTransaction();

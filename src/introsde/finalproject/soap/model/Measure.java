@@ -20,6 +20,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Persistence class for the "Measure" database table.
  * 
@@ -29,18 +31,20 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @Entity
 @Table(name = "Measure")
-@NamedQueries({ 
-	@NamedQuery(name = "Measure.findAll", query = "SELECT m FROM Measure m"),
-
+@NamedQueries({
+	@NamedQuery(name = "Measure.findAll", query = "SELECT m FROM Measure m")
 })
-@XmlType(propOrder={"idMeasure", "measureDefinition", "value" , "dateRegistered"})
+@XmlType(propOrder={"idMeasure", "measureDefinition", "value" , "timestamp"})
+@XmlAccessorType(XmlAccessType.NONE)
 public class Measure implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(generator = "sqlite_measure")
-	@TableGenerator(name = "sqlite_measure", table = "sequence", pkColumnName = "name", valueColumnName = "seq", pkColumnValue = "Measure", initialValue = 1, allocationSize = 1)
+	@TableGenerator(name = "sqlite_measure", table = "sqlite_sequence", 
+		pkColumnName = "name", valueColumnName = "seq", 
+		pkColumnValue = "Measure")
 	@Column(name = "idMeasure")
 	private int idMeasure;
 
@@ -48,68 +52,65 @@ public class Measure implements Serializable {
 	private String value;
 
 	@Temporal(TemporalType.DATE)
-	@Column(name = "dateRegistered")
-	private Date dateRegistered;
+	@Column(name = "timestamp")
+	private Date timestamp;
 
 	@OneToOne
-	@JoinColumn(name = "idMeasureDefinition", referencedColumnName = "idMeasureDefinition", nullable = false, insertable = true, updatable = true)
+	@JoinColumn(name = "idMeasureDefinition", referencedColumnName = "idMeasureDefinition", insertable = true, updatable = true)
 	private MeasureDefinition measureDefinition;
 
 	@ManyToOne
-	@JoinColumn(name = "idPerson", referencedColumnName = "idPerson", nullable = false)
+	@JoinColumn(name = "idPerson", referencedColumnName = "idPerson")
 	private Person person;
 
-	// constructor measure class
+	// Constructor measure class
 	public Measure() {
 	}
 
-	// getters and setters methods
+	// Getters methods
 	@XmlElement(name = "mid")
 	public int getIdMeasure() {
 		return idMeasure;
 	}
 
-	public void setIdMeasure(int idMeasure) {
-		this.idMeasure = idMeasure;
-	}
-
+	@XmlElement(name = "value")
 	public String getValue() {
 		return value;
+	}
+
+	@XmlElement(name = "created")
+	public Date getTimestamp() {
+		return timestamp;
+	}
+
+	@XmlElement(name = "measure")
+	@JsonProperty("measure")
+	public MeasureDefinition getMeasureDefinition() {
+		return measureDefinition;
+	}
+
+	// We make this transient for JAXB to avoid and infinite loop on
+	// serialization
+	@XmlTransient
+	public Person getPerson() {
+		return person;
+	}
+
+	// Setters methods
+	public void setIdMeasure(int idMeasure) {
+		this.idMeasure = idMeasure;
 	}
 
 	public void setValue(String value) {
 		this.value = value;
 	}
 
-	@XmlElement(name = "created")
-	//@Convert(converter = DateConverter.class)
-	//@XmlJavaTypeAdapter(DateAdapter.class)
-	public String getDateRegistered() {
-		//return dateRegistered;
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        return df.format(this.dateRegistered);
-	}
-
-	public void setDateRegistered(String dateRegistered) throws ParseException{
-		//this.dateRegistered = dateRegistered;
-		DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-        Date date = format.parse(dateRegistered);
-        this.dateRegistered = date;
-	}
-
-	@XmlElement(name = "name")
-	public MeasureDefinition getMeasureDefinition() {
-		return measureDefinition;
+	public void setTimestamp(Date timestamp) {
+		this.timestamp = timestamp;
 	}
 
 	public void setMeasureDefinition(MeasureDefinition measureDefinition) {
 		this.measureDefinition = measureDefinition;
-	}
-
-	// we make this transient for JAXB to avoid and infinite loop on serialization
-	@XmlTransient
-	public Person getPerson() {
-		return person;
 	}
 
 	public void setPerson(Person person) {
@@ -117,10 +118,11 @@ public class Measure implements Serializable {
 	}
 
 	public String toString() {
-		return "Measure ( " + idMeasure + " " + value + " " + dateRegistered + " )";
+		return "Measure ( " + idMeasure + ", " + measureDefinition + ", "
+				+ value + ", " + timestamp + " )";
 	}
 	
-	// Database Query Operations
+	// Database operations
 	public static Measure getMeasureById(int idMeasure) {
 		EntityManager em = LifeCoachDao.instance.createEntityManager();
 		em.getEntityManagerFactory().getCache().evictAll();
@@ -137,8 +139,7 @@ public class Measure implements Serializable {
 		LifeCoachDao.instance.closeConnections(em);
 		return list;
 	}
-	
-	//Database TRANSACTIONS Operations - CRUD
+
 	public static Measure saveMeasure(Measure m) {
 		EntityManager em = LifeCoachDao.instance.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
@@ -168,4 +169,5 @@ public class Measure implements Serializable {
 		tx.commit();
 		LifeCoachDao.instance.closeConnections(em);
 	}
+
 }
