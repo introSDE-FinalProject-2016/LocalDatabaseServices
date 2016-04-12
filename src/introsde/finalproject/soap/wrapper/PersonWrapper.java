@@ -10,7 +10,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import  introsde.finalproject.soap.model.Person;
 
-@XmlRootElement(name="People")
+
+/**
+ * Wrapper used when are listened the people of all the Person
+ *
+ */
+@XmlRootElement(name="people")
 public class PersonWrapper {
 	
 	@XmlElement(name="person")
