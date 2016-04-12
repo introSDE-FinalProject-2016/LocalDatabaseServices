@@ -32,7 +32,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Entity
 @Table(name = "Measure")
 @NamedQueries({
-	@NamedQuery(name = "Measure.findAll", query = "SELECT m FROM Measure m")
+	@NamedQuery(name = "Measure.findAll", query = "SELECT m FROM Measure m"),
+	@NamedQuery(name="Measure.findByIdPersonAndMeasureName", query="SELECT m FROM Measure m WHERE m.person = ?1 AND m.measureDefinition = ?2"),
+	@NamedQuery(name="Measure.findByIdPerson", query="SELECT m FROM Measure m WHERE m.person = ?1"),
+	@NamedQuery(name="Measure.findByIdMeasure", query="SELECT m FROM Measure m WHERE m.person = ?1 AND m.measureDefinition = ?2 AND m.idMeasure = ?3")
 })
 @XmlType(propOrder={"idMeasure", "measureDefinition", "value" , "timestamp"})
 @XmlAccessorType(XmlAccessType.NONE)
@@ -83,8 +86,8 @@ public class Measure implements Serializable {
 		return timestamp;
 	}
 
-	@XmlElement(name = "measure")
-	@JsonProperty("measure")
+	@XmlElement(name = "name")
+	@JsonProperty("name")
 	public MeasureDefinition getMeasureDefinition() {
 		return measureDefinition;
 	}
@@ -170,4 +173,62 @@ public class Measure implements Serializable {
 		LifeCoachDao.instance.closeConnections(em);
 	}
 
+	/**
+	 * Given a specified person and measureName, the function returns the list of the measure
+	 * associated to pid and measureName
+	 * @param p
+	 * @param m
+	 * @return
+	 */
+	public static List<Measure> getMeasureByMeasureName(Person p, MeasureDefinition md) {
+        EntityManager em = LifeCoachDao.instance.createEntityManager();
+        TypedQuery<Measure> query = em.createNamedQuery(
+        		"Measure.findByIdPersonAndMeasureName", Measure.class);
+		query.setParameter(1, p);
+		query.setParameter(2, md);
+		List<Measure> list = query.getResultList();
+		for(Measure m : list){
+        	System.out.println(m.toString());
+        }
+		LifeCoachDao.instance.closeConnections(em);
+        return list;
+    }
+	
+	/**
+	 * Given a specified person, the function returns the list of the measure
+	 * associated to pid
+	 * @param p
+	 * @return
+	 */
+	public static List<Measure> getMeasureByPerson(Person p) {
+        EntityManager em = LifeCoachDao.instance.createEntityManager();
+        TypedQuery<Measure> query = em.createNamedQuery(
+        		"Measure.findByIdPerson", Measure.class);
+		query.setParameter(1, p);
+		List<Measure> list = query.getResultList();
+		for(Measure m : list){
+        	System.out.println(m.toString());
+        }
+		LifeCoachDao.instance.closeConnections(em);
+        return list;
+    }
+	
+	/**
+	 * Given a specified person, measureName and idMeasure, the function returns a measure 
+	 * associated to pid, measureName and mid
+	 * @param person
+	 * @param measureDef
+	 * @return
+	 */
+	public static Measure getMeasureValueByMid(Person p, MeasureDefinition md, int mid){
+		EntityManager em = LifeCoachDao.instance.createEntityManager();
+        TypedQuery<Measure> query = em.createNamedQuery(
+        		"Measure.findByIdMeasure", Measure.class);
+		query.setParameter(1, p);
+		query.setParameter(2, md);
+		query.setParameter(3, mid);
+		Measure measure = query.getSingleResult();
+		LifeCoachDao.instance.closeConnections(em);
+		return measure;
+	}
 }

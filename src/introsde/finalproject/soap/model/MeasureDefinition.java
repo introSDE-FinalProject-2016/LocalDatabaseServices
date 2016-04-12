@@ -21,7 +21,9 @@ import javax.xml.bind.annotation.XmlValue;
 @Table(name = "MeasureDefinition")
 @NamedQueries({
 		@NamedQuery(name = "MeasureDefinition.findAll", query = "SELECT md FROM MeasureDefinition md"),
-		@NamedQuery(name = "MeasureDefinition.getMeasureDefinitionByName", query = "SELECT md FROM MeasureDefinition md WHERE md.measureName = ?1 ") })
+		@NamedQuery(name = "MeasureDefinition.getMeasureDefinitionByName", query = "SELECT md FROM MeasureDefinition md WHERE md.measureName = ?1 "),
+		
+})
 @XmlAccessorType(XmlAccessType.NONE)
 public class MeasureDefinition implements Serializable {
 
@@ -165,7 +167,6 @@ public class MeasureDefinition implements Serializable {
 	/**
 	 * Given a measure name, the function returns the corresponding
 	 * MeasureDefinition object.
-	 * 
 	 * @param measureName
 	 * @return MeasureDefinition
 	 */

@@ -22,7 +22,11 @@ import javax.xml.bind.annotation.XmlType;
 
 @Entity
 @Table(name = "Goal")
-@NamedQueries({ @NamedQuery(name = "Goal.findAll", query = "SELECT g FROM Goal g") })
+@NamedQueries({ 
+	@NamedQuery(name = "Goal.findAll", query = "SELECT g FROM Goal g"),
+	@NamedQuery(name = "Goal.findByIdPersonAndIdMeasureDef", query = "SELECT g FROM Goal g WHERE g.person = ?1 AND g.measureDefinition = ?2"),
+	@NamedQuery(name = "Goal.findByIdPerson", query = "SELECT g FROM Goal g WHERE g.person = ?1")
+	})
 @XmlType(propOrder={"idGoal", "type", "value" , "startDateGoal", "endDateGoal", "achieved"})
 @XmlAccessorType(XmlAccessType.NONE)
 public class Goal implements Serializable {
@@ -67,17 +71,17 @@ public class Goal implements Serializable {
 	}
 
 	// Getters methods
-	@XmlElement
+	@XmlElement(name="gid")
 	public int getIdGoal() {
 		return idGoal;
 	}
 
-	@XmlElement(name="goalValue")
+	@XmlElement
 	public int getValue() {
 		return value;
 	}
 
-	@XmlElement(name="goalType")
+	@XmlElement
 	public String getType() {
 		return type;
 	}
@@ -194,4 +198,42 @@ public class Goal implements Serializable {
 		tx.commit();
 		LifeCoachDao.instance.closeConnections(em);
 	}
+	
+	/**
+	 * Given a specified person and measure definition, the function returns the list of the goals
+	 * associated to idPerson and idMeasureDefinition.
+	 * @param p
+	 * @param m
+	 * @return
+	 */
+	public static List<Goal> getGoalByMeasureDef(Person p, MeasureDefinition md) {
+        EntityManager em = LifeCoachDao.instance.createEntityManager();
+        List<Goal> list = em.createNamedQuery("Goal.findByIdPersonAndIdMeasureDef", Goal.class)
+        		.setParameter(1, p)
+        		.setParameter(2, md)
+        		.getResultList();
+        for(Goal g : list){
+        	System.out.println(g.toString());
+        }
+        LifeCoachDao.instance.closeConnections(em);
+        return list;
+    }
+	
+	/**
+	 * Given a specified person, the function returns the list of the goals
+	 * associated to idPerson.
+	 * @param p
+	 * @return
+	 */
+	public static List<Goal> getGoalByPerson(Person p) {
+        EntityManager em = LifeCoachDao.instance.createEntityManager();
+        List<Goal> list = em.createNamedQuery("Goal.findByIdPerson", Goal.class)
+        		.setParameter(1, p)
+        		.getResultList();
+        for(Goal g : list){
+        	System.out.println(g.toString());
+        }
+        LifeCoachDao.instance.closeConnections(em);
+        return list;
+    }
 }

@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -30,13 +31,12 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @Entity
 @Table(name="Person")
 @NamedQueries({
-	@NamedQuery(name="Person.findAll", query="SELECT p FROM Person p"),
-	/*@NamedQuery(name="Person.currentHealth", query="SELECT m FROM Measure m "
-			+ "WHERE m.person = ?1 "
-			+ "GROUP BY m.measureDefinition "
-			+ "HAVING m.timestamp = MAX(m.timestamp)"),*/
+	@NamedQuery(name="Person.findAll", query="SELECT p FROM Person p"),	
 	@NamedQuery(name="Person.currentHealth", query="SELECT m FROM Measure m WHERE m.timestamp IN "
-			+ "(SELECT MAX(h.timestamp) FROM Measure h WHERE h.person = ?1 GROUP BY h.measureDefinition)")
+			+ "(SELECT MAX(h.timestamp) "
+			+ "FROM Measure h "
+			+ "WHERE h.person = ?1 "
+			+ "GROUP BY h.measureDefinition)"),
 })
 @XmlType(propOrder={"idPerson", "firstname", "lastname" , "birthdate", "email", "gender", "measure", "goal"})
 @XmlAccessorType(XmlAccessType.NONE)
@@ -83,7 +83,7 @@ public class Person implements Serializable{
 	}
 
 	// Getters methods
-	@XmlElement
+	@XmlElement(name="pid")
 	public int getIdPerson() {
 		return idPerson;
 	}
@@ -213,11 +213,12 @@ public class Person implements Serializable{
 
     public List<Measure> getQueryCurrentHealth() {
 		EntityManager em = LifeCoachDao.instance.createEntityManager();
-	    List<Measure> list = em.createNamedQuery("Person.currentHealth", Measure.class)
+	    List<Measure> listCurrentMeasure = em.createNamedQuery("Person.currentHealth", Measure.class)
 	    		.setParameter(1, this)
 	    		.getResultList();
 	    LifeCoachDao.instance.closeConnections(em);
-	    return list;
+	    return listCurrentMeasure;
+	    
 	}
     
 }
