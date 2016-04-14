@@ -42,7 +42,7 @@ public class Goal implements Serializable {
 	private int idGoal;
 
 	@Column(name = "value")
-	private int value;
+	private String value;
 
 	@Column(name = "type")
 	private String type;
@@ -77,7 +77,7 @@ public class Goal implements Serializable {
 	}
 
 	@XmlElement
-	public int getValue() {
+	public String getValue() {
 		return value;
 	}
 
@@ -117,7 +117,7 @@ public class Goal implements Serializable {
 		this.idGoal = idGoal;
 	}
 
-	public void setValue(int value) {
+	public void setValue(String value) {
 		this.value = value;
 	}
 
