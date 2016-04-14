@@ -97,8 +97,8 @@
     	
         <!-- DA MODIFICARE COMANDO START AND EXECUTE.CLIENT -->
     	<target name="start" depends="install">
-            <echo message="app start introsde.finalproject.soap.endpoint.PeoplePublisher in ${build.dir}" />
-            <java classname="introsde.finalproject.soap.endpoint.PeoplePublisher" classpath="${build.dir}" fork="true">
+            <echo message="app start introsde.finalproject.soap.localdbservices.endpoint.PeoplePublisher in ${build.dir}" />
+            <java classname="introsde.finalproject.soap.localdbservices.endpoint.PeoplePublisher" classpath="${build.dir}" fork="true">
                 <arg value="$JAVA_OPTS  -cp" />
                 <classpath>
                     <path location="build" />
