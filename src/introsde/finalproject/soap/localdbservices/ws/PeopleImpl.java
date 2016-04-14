@@ -212,7 +212,7 @@ public class PeopleImpl implements People {
 			System.out.println("--> REQUESTED: createGoal(" + goal.getType()
 					+ ", " + idPerson + ")");
 			String goalType = goal.getType();
-
+			
 			// searches the measure definition associated with the name of
 			// the measure
 			MeasureDefinition temp = new MeasureDefinition();
@@ -226,6 +226,8 @@ public class PeopleImpl implements People {
 						+ p.getIdPerson());
 				goal.setPerson(p);
 				goal.setMeasureDefinition(temp);
+				
+				System.out.println(goal.toString());
 				Goal.saveGoal(goal);
 				return goal.getIdGoal();
 			} else {
@@ -328,7 +330,7 @@ public class PeopleImpl implements People {
 				// if there is no value, remain the previous value, the same
 				// happens
 				// with Type, StartDateGoal, EndDateGoal and Achieved
-				if (goal.getValue() == 0) {
+				if (goal.getValue() == null) {
 					goal.setValue(existing.getValue());
 				}
 				if (goal.getType() == null) {
