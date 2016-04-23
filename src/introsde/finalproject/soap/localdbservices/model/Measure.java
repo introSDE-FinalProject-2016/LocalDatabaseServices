@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -72,6 +73,7 @@ public class Measure implements Serializable {
 
 	// Getters methods
 	@XmlElement(name = "mid")
+	@JsonProperty("mid")
 	public int getIdMeasure() {
 		return idMeasure;
 	}
@@ -82,6 +84,8 @@ public class Measure implements Serializable {
 	}
 
 	@XmlElement(name = "created")
+	@JsonProperty("created")
+	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
 	public Date getTimestamp() {
 		return timestamp;
 	}
