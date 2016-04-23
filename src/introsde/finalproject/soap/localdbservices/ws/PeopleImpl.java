@@ -166,35 +166,57 @@ public class PeopleImpl implements People {
 	}
 
 	/**
-	 * Method #5: deletePerson(int idPerson) => String message This method
+	 * Method #5: deletePerson(int idPerson) => int message code This method
 	 * cancel from the database the person identified by id and also his/her
 	 * measures
 	 */
 	@Override
-	public String deletePerson(int idPerson) {
+	public int deletePerson(int idPerson) {
 		try {
 			System.out.println("---> REQUEST: deletePerson(" + idPerson + ")");
-			String result = "";
 			Person p = Person.getPersonById(idPerson);
+
 			if (p != null) {
+
+				System.out.println("Found Person by id = " + idPerson);
+
 				if (!p.getMeasure().isEmpty()) {
+					System.out.println("Found Measures for a person with id = "
+							+ idPerson);
 					for (int i = 0; i < p.getMeasure().size(); i++) {
 						Measure.removeMeasure(p.getMeasure().get(i));
 					}
-					Person.removePerson(p);
-					result = "Person with id: " + idPerson
-							+ " deleted with his/her measures";
-					return result;
 				}
+				if (!p.getGoal().isEmpty()) {
+					System.out.println("Found Goals for a person with id = "
+							+ idPerson);
+					for (int i = 0; i < p.getGoal().size(); i++) {
+						Goal.removeGoal(p.getGoal().get(i));
+					}
+				}
+
 				Person.removePerson(p);
-				result = "Person with id: " + idPerson + " deleted";
-				return result;
+				return 1;
+
 			} else {
-				result = "Person with id: " + idPerson + " not found!";
-				return result;
+				System.out.println("Didn't find any Person with  id = "
+						+ idPerson);
+				return -2;
 			}
+			/*
+			 * String result = ""; Person p = Person.getPersonById(idPerson); if
+			 * (p != null) { if (!p.getMeasure().isEmpty()) { for (int i = 0; i
+			 * < p.getMeasure().size(); i++) {
+			 * Measure.removeMeasure(p.getMeasure().get(i)); }
+			 * Person.removePerson(p); result = "Person with id: " + idPerson +
+			 * " deleted with his/her measures"; return result; }
+			 * Person.removePerson(p); result = "Person with id: " + idPerson +
+			 * " deleted"; return result; } else { result = "Person with id: " +
+			 * idPerson + " not found!"; return result; }
+			 */
 		} catch (Exception e) {
-			return "Person not deleted due to the exception: " + e;
+			System.out.println("Person not deleted due the exception: " + e);
+			return -1;
 		}
 	}
 
@@ -212,7 +234,7 @@ public class PeopleImpl implements People {
 			System.out.println("--> REQUESTED: createGoal(" + goal.getType()
 					+ ", " + idPerson + ")");
 			String goalType = goal.getType();
-			
+
 			// searches the measure definition associated with the name of
 			// the measure
 			MeasureDefinition temp = new MeasureDefinition();
@@ -226,13 +248,13 @@ public class PeopleImpl implements People {
 						+ p.getIdPerson());
 				goal.setPerson(p);
 				goal.setMeasureDefinition(temp);
-				
+
 				System.out.println(goal.toString());
 				Goal.saveGoal(goal);
 				return goal.getIdGoal();
 			} else {
-				System.out
-						.println("Din't find any Person with id = " + idPerson);
+				System.out.println("Din't find any Person with id = "
+						+ idPerson);
 				return -2;
 			}
 		} catch (Exception e) {
@@ -251,32 +273,30 @@ public class PeopleImpl implements People {
 			String measureName) {
 		System.out.println("--> REQUESTED: getGoalByPersonMeasureDef("
 				+ idPerson + ", " + measureName + ")");
-		
+
 		Person p = Person.getPersonById(idPerson);
 		// searches the measure definition associated with the name of
 		// the measure
 		MeasureDefinition md = new MeasureDefinition();
 		md = MeasureDefinition.getMeasureDefinitionByName(measureName);
-		
+
 		List<Goal> goalList = null;
 		GoalWrapper lgwrapper = new GoalWrapper();
-		
+
 		if ((p != null) && (md != null)) {
 			System.out.println("Found Person by id = " + idPerson + " => "
 					+ p.getIdPerson());
 			System.out
-					.println("Found Measure by name = "
-							+ md.getMeasureName());
-			
+					.println("Found Measure by name = " + md.getMeasureName());
+
 			goalList = Goal.getGoalByMeasureDef(p, md);
 			lgwrapper.setGoalList(goalList);
-			
+
 			return lgwrapper;
-			
+
 		} else {
 			System.out.println("Didn't find any Person with  idPerson = "
-					+ idPerson + " and measureName = "
-					+ measureName);
+					+ idPerson + " and measureName = " + measureName);
 			lgwrapper.setGoalList(goalList);
 			return lgwrapper;
 		}
@@ -362,25 +382,28 @@ public class PeopleImpl implements People {
 	}
 
 	/**
-	 * Method #5: deleteGoal(int idGoal) => String message This method cancel
+	 * Method #5: deleteGoal(int idGoal) => int message code This method cancel
 	 * from the database the goal identified by id
 	 */
 	@Override
-	public String deleteGoal(int idGoal) {
+	public int deleteGoal(int idGoal) {
 		try {
 			System.out.println("---> REQUEST: deleteGoal(" + idGoal + ")");
-			String result = "";
 			Goal g = Goal.getGoalById(idGoal);
+
 			if (g != null) {
+				System.out.println("Found Goal by id = " + idGoal);
 				Goal.removeGoal(g);
-				result = "Goal with id: " + idGoal + " deleted";
-				return result;
+				return 1;
+
 			} else {
-				result = "Goal with id: " + idGoal + " not found!";
-				return result;
+				System.out.println("Didn't find any Goal with  id = " + idGoal);
+				return -2;
 			}
+
 		} catch (Exception e) {
-			return "Goal not deleted due to the exception: " + e;
+			System.out.println("Goal not updated due the exception: " + e);
+			return -1;
 		}
 	}
 
@@ -425,8 +448,8 @@ public class PeopleImpl implements People {
 				return measure.getIdMeasure();
 
 			} else {
-				System.out
-						.println("Din't find any Person with id = " + idPerson);
+				System.out.println("Din't find any Person with id = "
+						+ idPerson);
 				return -2;
 			}
 
@@ -498,21 +521,22 @@ public class PeopleImpl implements People {
 
 		Measure measure = null;
 		String value = null;
-		try{
+		try {
 			System.out.println("Found Person by id = " + idPerson + " => "
 					+ p.getIdPerson());
 			System.out.println("Found MeasureDefinition by measureName = "
 					+ temp.getMeasureName());
-			System.out.println("Found Measure by id = "
-					+ idMeasure);
-			
+			System.out.println("Found Measure by id = " + idMeasure);
+
 			measure = Measure.getMeasureValueByMid(p, temp, idMeasure);
 			value = measure.getValue();
 			System.out.println("Found value => " + value);
-			
-		}catch(Exception ex){
-			throw new RuntimeException("Didn't find any Person with  idPerson = "
-					+ idPerson + ", measureName = " + measureName + " and idMeasure = " + idMeasure);
+
+		} catch (Exception ex) {
+			throw new RuntimeException(
+					"Didn't find any Person with  idPerson = " + idPerson
+							+ ", measureName = " + measureName
+							+ " and idMeasure = " + idMeasure);
 		}
 		return value;
 	}
@@ -594,26 +618,28 @@ public class PeopleImpl implements People {
 	}
 
 	/**
-	 * Method #6: deleteMeasure(int idMeasure) => String message This method
+	 * Method #6: deleteMeasure(int idMeasure) => int message code This method
 	 * cancel from the database the measure identified by id
 	 */
 	@Override
-	public String deleteMeasure(int idMeasure) {
+	public int deleteMeasure(int idMeasure) {
 		try {
-			System.out
-					.println("---> REQUEST: deleteMeasure(" + idMeasure + ")");
-			String result = "";
+			System.out.println("---> REQUEST: deleteMeasure(" + idMeasure + ")");
 			Measure m = Measure.getMeasureById(idMeasure);
+			
 			if (m != null) {
+				System.out.println("Found Measure by id = " + idMeasure);
 				Measure.removeMeasure(m);
-				result = "Measure with id: " + idMeasure + " deleted";
-				return result;
+				return 1;
+
 			} else {
-				result = "Measure with id: " + idMeasure + " not found!";
-				return result;
+				System.out.println("Didn't find any Measure with  id = " + idMeasure);
+				return -2;
 			}
+
 		} catch (Exception e) {
-			return "Measure not deleted due to the exception: " + e;
+			System.out.println("Measure not updated due the exception: " + e);
+			return -1;
 		}
 	}
 
@@ -622,12 +648,11 @@ public class PeopleImpl implements People {
 	 */
 
 	/**
-	 * Method #1: getMeasureNames() => List<MeasureDefinition> 
-	 * This method retrieves all information about
-	 * the provided measure definitions
+	 * Method #1: getMeasureNames() => List<MeasureDefinition> This method
+	 * retrieves all information about the provided measure definitions
 	 */
 	@Override
-	public MeasureDefinitionWrapper getMeasureDefinitionNames(){
+	public MeasureDefinitionWrapper getMeasureDefinitionNames() {
 		MeasureDefinitionWrapper lmdWrapper = new MeasureDefinitionWrapper();
 		lmdWrapper.setMeasureDefinitionList(MeasureDefinition.getAll());
 		return lmdWrapper;
