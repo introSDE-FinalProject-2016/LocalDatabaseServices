@@ -62,6 +62,7 @@ public class Person implements Serializable{
 	
 	@Temporal(TemporalType.DATE)
 	@Column(name="birthdate")
+	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
 	//@Convert(converter = DateConverter.class)
 	//@XmlJavaTypeAdapter(DateAdapter.class)
 	private Date birthdate;
@@ -101,7 +102,7 @@ public class Person implements Serializable{
 	}
 
 	@XmlElement
-	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
+	//@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
 	public Date getBirthdate() {
 		return birthdate;
 	}
