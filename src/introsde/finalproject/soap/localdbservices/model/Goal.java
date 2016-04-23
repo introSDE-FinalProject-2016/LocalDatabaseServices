@@ -13,6 +13,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 /**
  * Persistence class for the "Goal" database table.
  * 
@@ -87,11 +89,13 @@ public class Goal implements Serializable {
 	}
 
 	@XmlElement
+	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
 	public Date getStartDateGoal() {
 		return startDateGoal;
 	}
 
 	@XmlElement
+	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
 	public Date getEndDateGoal() {
 		return endDateGoal;
 	}
