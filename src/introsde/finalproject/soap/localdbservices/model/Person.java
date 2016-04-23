@@ -1,26 +1,17 @@
 package introsde.finalproject.soap.localdbservices.model;
 
-import introsde.finalproject.soap.localdbservices.adapter.DateAdapter;
-import introsde.finalproject.soap.localdbservices.converter.DateConverter;
 import introsde.finalproject.soap.localdbservices.dao.LifeCoachDao;
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -62,7 +53,6 @@ public class Person implements Serializable{
 	
 	@Temporal(TemporalType.DATE)
 	@Column(name="birthdate")
-	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
 	//@Convert(converter = DateConverter.class)
 	//@XmlJavaTypeAdapter(DateAdapter.class)
 	private Date birthdate;
@@ -102,7 +92,7 @@ public class Person implements Serializable{
 	}
 
 	@XmlElement
-	//@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
+	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
 	public Date getBirthdate() {
 		return birthdate;
 	}
