@@ -40,7 +40,7 @@ public interface People {
     
 	@WebMethod(operationName="deletePerson")
     @WebResult(name="responsePersonCode") 
-    public String deletePerson(@WebParam(name="pid") int idPerson);
+    public int deletePerson(@WebParam(name="pid") int idPerson);
 	
 	
 	/**
@@ -64,7 +64,7 @@ public interface People {
     
 	@WebMethod(operationName="deleteGoal")
     @WebResult(name="responseGoalCode") 
-    public String deleteGoal(@WebParam(name="gid") int idGoal);
+    public int deleteGoal(@WebParam(name="gid") int idGoal);
 	
 	
 	/**
@@ -92,7 +92,7 @@ public interface People {
 	
 	@WebMethod(operationName="deleteMeasure")
     @WebResult(name="responseMeasureCode") 
-    public String deleteMeasure(@WebParam(name="mid") int idMeasure);
+    public int deleteMeasure(@WebParam(name="mid") int idMeasure);
 	
 	/**
 	 * Definition CRUD Operation to MeasureDefinition
