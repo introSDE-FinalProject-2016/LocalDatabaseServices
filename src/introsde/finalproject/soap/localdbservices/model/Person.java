@@ -22,6 +22,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 /**
  * Persistence class for the "Person" database table.
  * @author yuly
@@ -99,6 +101,7 @@ public class Person implements Serializable{
 	}
 
 	@XmlElement
+	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
 	public Date getBirthdate() {
 		return birthdate;
 	}
