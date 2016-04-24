@@ -268,14 +268,14 @@ public class PeopleImpl implements People {
 	}
 
 	/**
-	 * Method #2: getGoalByMeasure(int idPerson, int idMeasureDefinition) =>
+	 * Method #2: getGoal(int idPerson, int idMeasureDefinition) =>
 	 * List<Goal> This method retrieve information about goal for a specified
 	 * person and measure definition
 	 */
 	@Override
-	public GoalWrapper getGoalByPersonMeasureName(int idPerson,
+	public GoalWrapper getGoal(int idPerson,
 			String measureName) {
-		System.out.println("--> REQUESTED: getGoalByPersonMeasureDef("
+		System.out.println("--> REQUESTED: getGoal("
 				+ idPerson + ", " + measureName + ") in Local Database Services");
 
 		Person p = Person.getPersonById(idPerson);
