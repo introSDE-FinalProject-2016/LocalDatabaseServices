@@ -52,7 +52,7 @@ public interface People {
 	
 	@WebMethod(operationName="getGoal")
 	@WebResult(name="goals")
-	public GoalWrapper getGoalByPersonMeasureName(@WebParam(name="pid") int idPerson, @WebParam(name="measureName") String measureName);
+	public GoalWrapper getGoal(@WebParam(name="pid") int idPerson, @WebParam(name="measureName") String measureName);
 	
 	@WebMethod(operationName="getGoalList")
 	@WebResult(name="goals")
