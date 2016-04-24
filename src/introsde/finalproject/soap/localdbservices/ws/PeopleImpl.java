@@ -12,11 +12,8 @@ import introsde.finalproject.soap.localdbservices.wrapper.PersonWrapper;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
-import javax.jws.WebParam;
 import javax.jws.WebService;
 
-import org.apache.xmlbeans.impl.regex.REUtil;
 
 /**
  * Service Implementation
@@ -37,7 +34,7 @@ public class PeopleImpl implements People {
 	 */
 	@Override
 	public PersonWrapper getPersonList() {
-		System.out.println("--> REQUEST: getPersonList()");
+		System.out.println("--> REQUEST: getPersonList() in Local Database Services");
 		PersonWrapper pWrapper = new PersonWrapper();
 		pWrapper.setPersonList(Person.getAll());
 		return pWrapper;
@@ -50,7 +47,7 @@ public class PeopleImpl implements People {
 	 */
 	@Override
 	public Person getPerson(int idPerson) {
-		System.out.println("--> REQUEST: getPerson(" + idPerson + ")");
+		System.out.println("--> REQUEST: getPerson(" + idPerson + ") in Local Database Services");
 		Person p = Person.getPersonById(idPerson);
 		if (p != null) {
 			System.out.println("Found Person by id = " + idPerson + " => "
@@ -67,47 +64,54 @@ public class PeopleImpl implements People {
 	 */
 	@Override
 	public int createPerson(Person person, List<Measure> measure) {
-		// phase #1: check if person includes some measures
-		// if is true
-		if (measure.isEmpty()) {
-			System.out.println("--> REQUESTED: createPerson("
-					+ person.getFirstname() + ") without measure");
-			Person.savePerson(person);
-			return person.getIdPerson();
+		try{
+			// phase #1: check if person includes some measures
+			// if is true
+			if (measure.isEmpty()) {
+				System.out.println("--> REQUESTED: createPerson("
+						+ person.getFirstname() + ") without measure in Local Database Services");
+				Person.savePerson(person);
+				return person.getIdPerson();
 
-		}// else if is false
-		else {
-			// removes the currentMeasure in the person and puts them in another
-			// variable
-			System.out.println("--> REQUESTED: createPerson("
-					+ person.getFirstname() + ") with new measure");
-			Person p = Person.savePerson(person);
-			// creates the today date
-			Calendar today = Calendar.getInstance();
-			ArrayList<Integer> control = new ArrayList<>();
-			for (int i = 0; i < measure.size(); i++) {
-				// retrieves the name of the measures inserted by the client
-				// (e.g. weight)
-				String measureName = measure.get(i).getMeasureDefinition()
-						.getMeasureName();
+			}// else if is false
+			else {
+				// removes the currentMeasure in the person and puts them in another
+				// variable
+				System.out.println("--> REQUESTED: createPerson("
+						+ person.getFirstname() + ") with new measure in Local Database Services");
+				Person p = Person.savePerson(person);
+				// creates the today date
+				Calendar today = Calendar.getInstance();
+				ArrayList<Integer> control = new ArrayList<>();
+				for (int i = 0; i < measure.size(); i++) {
+					// retrieves the name of the measures inserted by the client
+					// (e.g. weight)
+					String measureName = measure.get(i).getMeasureDefinition()
+							.getMeasureName();
 
-				// searches the measure definition associated with the name of
-				// the measure
-				MeasureDefinition temp = new MeasureDefinition();
-				temp = MeasureDefinition
-						.getMeasureDefinitionByName(measureName);
+					// searches the measure definition associated with the name of
+					// the measure
+					MeasureDefinition temp = new MeasureDefinition();
+					temp = MeasureDefinition
+							.getMeasureDefinitionByName(measureName);
 
-				if (!control.contains(temp.getIdMeasureDefinition())) {
-					control.add(temp.getIdMeasureDefinition());
-					measure.get(i).setPerson(p);
-					measure.get(i).setTimestamp(today.getTime());
-					measure.get(i).setMeasureDefinition(temp);
-					Measure.saveMeasure(measure.get(i));
+					if (!control.contains(temp.getIdMeasureDefinition())) {
+						control.add(temp.getIdMeasureDefinition());
+						measure.get(i).setPerson(p);
+						measure.get(i).setTimestamp(today.getTime());
+						measure.get(i).setMeasureDefinition(temp);
+						Measure.saveMeasure(measure.get(i));
+					}
 				}
+				Person.getPersonById(p.getIdPerson());
+				return p.getIdPerson();
 			}
-			Person.getPersonById(p.getIdPerson());
-			return p.getIdPerson();
+
+		}catch(Exception e){
+			System.out.println("Person not created due the exception: " + e);
+			return -1;
 		}
+			
 	}
 
 	/**
@@ -117,7 +121,7 @@ public class PeopleImpl implements People {
 	public int updatePerson(Person person) {
 		try {
 			System.out.println("--> REQUEST: updatePerson(" + person.toString()
-					+ ")");
+					+ ") in Local Database Services");
 			Person existing = Person.getPersonById(person.getIdPerson());
 			int personId;
 
@@ -173,7 +177,7 @@ public class PeopleImpl implements People {
 	@Override
 	public int deletePerson(int idPerson) {
 		try {
-			System.out.println("---> REQUEST: deletePerson(" + idPerson + ")");
+			System.out.println("---> REQUEST: deletePerson(" + idPerson + ") in Local Database Services");
 			Person p = Person.getPersonById(idPerson);
 
 			if (p != null) {
@@ -232,7 +236,7 @@ public class PeopleImpl implements People {
 	public int createGoal(Goal goal, int idPerson) {
 		try {
 			System.out.println("--> REQUESTED: createGoal(" + goal.getType()
-					+ ", " + idPerson + ")");
+					+ ", " + idPerson + ") in Local Database Services");
 			String goalType = goal.getType();
 
 			// searches the measure definition associated with the name of
@@ -272,7 +276,7 @@ public class PeopleImpl implements People {
 	public GoalWrapper getGoalByPersonMeasureName(int idPerson,
 			String measureName) {
 		System.out.println("--> REQUESTED: getGoalByPersonMeasureDef("
-				+ idPerson + ", " + measureName + ")");
+				+ idPerson + ", " + measureName + ") in Local Database Services");
 
 		Person p = Person.getPersonById(idPerson);
 		// searches the measure definition associated with the name of
@@ -308,7 +312,7 @@ public class PeopleImpl implements People {
 	 */
 	@Override
 	public GoalWrapper getGoalList(int idPerson) {
-		System.out.println("--> REQUESTED: getGoalList(" + idPerson + ")");
+		System.out.println("--> REQUESTED: getGoalList(" + idPerson + ") in Local Database Services");
 		Person p = Person.getPersonById(idPerson);
 		List<Goal> goalList = null;
 		GoalWrapper lgwrapper = new GoalWrapper();
@@ -333,7 +337,7 @@ public class PeopleImpl implements People {
 	public int updateGoal(Goal goal) {
 		try {
 			System.out.println("--> REQUEST: updateGoal(" + goal.toString()
-					+ ")");
+					+ ") in Local Database Services");
 			Goal existing = Goal.getGoalById(goal.getIdGoal());
 			int goalId;
 
@@ -388,7 +392,7 @@ public class PeopleImpl implements People {
 	@Override
 	public int deleteGoal(int idGoal) {
 		try {
-			System.out.println("---> REQUEST: deleteGoal(" + idGoal + ")");
+			System.out.println("---> REQUEST: deleteGoal(" + idGoal + ") in Local Database Services");
 			Goal g = Goal.getGoalById(idGoal);
 
 			if (g != null) {
@@ -420,7 +424,7 @@ public class PeopleImpl implements People {
 		try {
 			System.out.println("--> REQUESTED: createMeasure("
 					+ measure.getMeasureDefinition().getMeasureName() + ", "
-					+ idPerson + ")");
+					+ idPerson + ") in Local Database Services");
 
 			String measureName = measure.getMeasureDefinition()
 					.getMeasureName();
@@ -468,7 +472,7 @@ public class PeopleImpl implements People {
 	public MeasureWrapper getMeasure(int idPerson, String measureName) {
 
 		System.out.println("--> REQUESTED: getMeasure(" + idPerson + ", "
-				+ measureName + ")");
+				+ measureName + ") in Local Database Services");
 		Person p = Person.getPersonById(idPerson);
 		// searches the measure definition associated with the name of
 		// the measure
@@ -511,7 +515,7 @@ public class PeopleImpl implements People {
 	public String getMeasureValue(int idPerson, String measureName,
 			int idMeasure) {
 		System.out.println("--> REQUESTED: getMeasureValue(" + idPerson + ", "
-				+ measureName + ", " + idMeasure + ")");
+				+ measureName + ", " + idMeasure + ") in Local Database Services");
 
 		Person p = Person.getPersonById(idPerson);
 		// searches the measure definition associated with the name of
@@ -547,6 +551,8 @@ public class PeopleImpl implements People {
 	 */
 	@Override
 	public MeasureWrapper getMeasureHistoryProfile(int idPerson) {
+		System.out.println("--> REQUEST: getMeasureHistoryProfile("
+					+ idPerson + ") in Local Database Services");
 		Person p = Person.getPersonById(idPerson);
 
 		List<Measure> measureList = null;
@@ -574,7 +580,7 @@ public class PeopleImpl implements People {
 	public int updateMeasure(Measure measure) {
 		try {
 			System.out.println("--> REQUEST: updateMeasure("
-					+ measure.toString() + ")");
+					+ measure.toString() + ") in Local Database Services");
 			Measure existing = Measure.getMeasureById(measure.getIdMeasure());
 			int measureId;
 
@@ -624,7 +630,7 @@ public class PeopleImpl implements People {
 	@Override
 	public int deleteMeasure(int idMeasure) {
 		try {
-			System.out.println("---> REQUEST: deleteMeasure(" + idMeasure + ")");
+			System.out.println("---> REQUEST: deleteMeasure(" + idMeasure + ") in Local Database Services");
 			Measure m = Measure.getMeasureById(idMeasure);
 			
 			if (m != null) {
@@ -653,6 +659,7 @@ public class PeopleImpl implements People {
 	 */
 	@Override
 	public MeasureDefinitionWrapper getMeasureDefinitionNames() {
+		System.out.println("---> REQUEST: getMeasureDefinitionNames() in Local Database Services");
 		MeasureDefinitionWrapper lmdWrapper = new MeasureDefinitionWrapper();
 		lmdWrapper.setMeasureDefinitionList(MeasureDefinition.getAll());
 		return lmdWrapper;
