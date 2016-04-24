@@ -546,12 +546,12 @@ public class PeopleImpl implements People {
 	}
 
 	/**
-	 * Method #4: getMeasureHistoryProfile(int idPerson) => List<Measure> This
+	 * Method #4: getHistoryHealth(int idPerson) => List<Measure> This
 	 * method retrieve information about measure for a specified person
 	 */
 	@Override
-	public MeasureWrapper getMeasureHistoryProfile(int idPerson) {
-		System.out.println("--> REQUEST: getMeasureHistoryProfile("
+	public MeasureWrapper getHistoryHealth(int idPerson) {
+		System.out.println("--> REQUEST: getHistoryHealth("
 					+ idPerson + ") in Local Database Services");
 		Person p = Person.getPersonById(idPerson);
 
