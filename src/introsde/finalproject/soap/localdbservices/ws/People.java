@@ -82,9 +82,9 @@ public interface People {
 	@WebResult(name="value")
 	public String getMeasureValue(@WebParam(name="pid") int idPerson, @WebParam(name="measureName") String measureName, @WebParam(name="mid") int idMeasure);
 	
-	@WebMethod(operationName="getMeasureList")
+	@WebMethod(operationName="getHistoryHealth")
 	@WebResult(name="historyHealth")
-	public MeasureWrapper getMeasureHistoryProfile(@WebParam(name="pid") int idPerson);
+	public MeasureWrapper getHistoryHealth(@WebParam(name="pid") int idPerson);
 	
 	@WebMethod(operationName="updateMeasure")
     @WebResult(name="mid") 
