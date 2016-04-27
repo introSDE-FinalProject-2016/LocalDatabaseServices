@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Persistence class for the "Goal" database table.
@@ -51,6 +52,7 @@ public class Goal implements Serializable {
 
 	@Temporal(TemporalType.DATE)
 	@Column(name = "startDateGoal")
+	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
 	private Date startDateGoal;
 
 	@Temporal(TemporalType.DATE)
@@ -74,6 +76,7 @@ public class Goal implements Serializable {
 
 	// Getters methods
 	@XmlElement(name="gid")
+	@JsonProperty("gid")
 	public int getIdGoal() {
 		return idGoal;
 	}
@@ -89,7 +92,7 @@ public class Goal implements Serializable {
 	}
 
 	@XmlElement
-	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
+	//@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
 	public Date getStartDateGoal() {
 		return startDateGoal;
 	}
