@@ -82,8 +82,8 @@ public class Measure implements Serializable {
 
 	@XmlElement(name = "created")
 	@JsonProperty("created")
-	//@Convert(converter = DateConverter.class)
-	//@XmlJavaTypeAdapter(DateAdapter.class)
+	@Convert(converter = DateConverter.class)
+	@XmlJavaTypeAdapter(DateAdapter.class)
 	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
 	public Date getTimestamp() {
 		return timestamp;
