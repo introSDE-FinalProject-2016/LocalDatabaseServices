@@ -1,5 +1,7 @@
 package introsde.finalproject.soap.localdbservices.model;
 
+import introsde.finalproject.soap.localdbservices.adapter.DateAdapter;
+import introsde.finalproject.soap.localdbservices.converter.DateConverter;
 import introsde.finalproject.soap.localdbservices.dao.LifeCoachDao;
 
 import java.io.Serializable;
@@ -12,6 +14,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -24,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 
 @Entity
+@Cacheable(false)
 @Table(name = "Goal")
 @NamedQueries({ 
 	@NamedQuery(name = "Goal.findAll", query = "SELECT g FROM Goal g"),
@@ -52,7 +56,6 @@ public class Goal implements Serializable {
 
 	@Temporal(TemporalType.DATE)
 	@Column(name = "startDateGoal")
-	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
 	private Date startDateGoal;
 
 	@Temporal(TemporalType.DATE)
@@ -92,12 +95,16 @@ public class Goal implements Serializable {
 	}
 
 	@XmlElement
-	//@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
+	//@Convert(converter = DateConverter.class)
+	//@XmlJavaTypeAdapter(DateAdapter.class)
+	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
 	public Date getStartDateGoal() {
 		return startDateGoal;
 	}
 
 	@XmlElement
+	//@Convert(converter = DateConverter.class)
+	//@XmlJavaTypeAdapter(DateAdapter.class)
 	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
 	public Date getEndDateGoal() {
 		return endDateGoal;
