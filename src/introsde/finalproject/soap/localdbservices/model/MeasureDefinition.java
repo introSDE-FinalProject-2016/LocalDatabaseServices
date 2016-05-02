@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlValue;
  */
 
 @Entity
+@Cacheable(false)
 @Table(name = "MeasureDefinition")
 @NamedQueries({
 		@NamedQuery(name = "MeasureDefinition.findAll", query = "SELECT md FROM MeasureDefinition md"),
