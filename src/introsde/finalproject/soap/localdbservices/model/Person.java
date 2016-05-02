@@ -1,5 +1,7 @@
 package introsde.finalproject.soap.localdbservices.model;
 
+import introsde.finalproject.soap.localdbservices.adapter.DateAdapter;
+import introsde.finalproject.soap.localdbservices.converter.DateConverter;
 import introsde.finalproject.soap.localdbservices.dao.LifeCoachDao;
 
 import java.io.Serializable;
@@ -12,8 +14,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+
+//import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
  * Persistence class for the "Person" database table.
@@ -22,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
  */
 
 @Entity
+@Cacheable(false)
 @Table(name="Person")
 @NamedQueries({
 	@NamedQuery(name="Person.findAll", query="SELECT p FROM Person p"),	
@@ -53,8 +59,6 @@ public class Person implements Serializable{
 	
 	@Temporal(TemporalType.DATE)
 	@Column(name="birthdate")
-	//@Convert(converter = DateConverter.class)
-	//@XmlJavaTypeAdapter(DateAdapter.class)
 	private Date birthdate;
 	
 	@Column(name="email")
@@ -92,6 +96,8 @@ public class Person implements Serializable{
 	}
 
 	@XmlElement
+	//@Convert(converter = DateConverter.class)
+	//@XmlJavaTypeAdapter(DateAdapter.class)
 	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
 	public Date getBirthdate() {
 		return birthdate;
