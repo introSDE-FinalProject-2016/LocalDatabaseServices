@@ -5,12 +5,8 @@ import introsde.finalproject.soap.localdbservices.converter.DateConverter;
 import introsde.finalproject.soap.localdbservices.dao.LifeCoachDao;
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -31,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 
 @Entity
+@Cacheable(false)
 @Table(name = "Measure")
 @NamedQueries({
 	@NamedQuery(name = "Measure.findAll", query = "SELECT m FROM Measure m"),
@@ -85,6 +82,8 @@ public class Measure implements Serializable {
 
 	@XmlElement(name = "created")
 	@JsonProperty("created")
+	//@Convert(converter = DateConverter.class)
+	//@XmlJavaTypeAdapter(DateAdapter.class)
 	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
 	public Date getTimestamp() {
 		return timestamp;
