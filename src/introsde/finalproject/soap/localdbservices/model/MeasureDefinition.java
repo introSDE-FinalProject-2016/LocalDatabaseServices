@@ -131,6 +131,9 @@ public class MeasureDefinition implements Serializable {
 		List<MeasureDefinition> list = em.createNamedQuery(
 				"MeasureDefinition.findAll", MeasureDefinition.class)
 				.getResultList();
+		for(MeasureDefinition md : list){
+			System.out.println(md.toString());
+		}
 		LifeCoachDao.instance.closeConnections(em);
 		return list;
 	}
@@ -175,13 +178,14 @@ public class MeasureDefinition implements Serializable {
 			String measureName) {
 		EntityManager em = LifeCoachDao.instance.createEntityManager();
 		try {
-			MeasureDefinition p = em
+			MeasureDefinition md = em
 					.createNamedQuery(
 							"MeasureDefinition.getMeasureDefinitionByName",
 							MeasureDefinition.class)
 					.setParameter(1, measureName).getSingleResult();
+			System.out.println(md.toString());
 			LifeCoachDao.instance.closeConnections(em);
-			return p;
+			return md;
 		} catch (Exception e) {
 			return null;
 		}
