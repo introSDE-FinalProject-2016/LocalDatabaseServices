@@ -18,8 +18,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-//import com.fasterxml.jackson.annotation.JsonFormat;
-
 /**
  * Persistence class for the "Person" database table.
  * @author yuly
@@ -177,6 +175,9 @@ public class Person implements Serializable{
         EntityManager em = LifeCoachDao.instance.createEntityManager();
         em.getEntityManagerFactory().getCache().evictAll();
         List<Person> list = em.createNamedQuery("Person.findAll", Person.class).getResultList();
+        for(Person p: list){
+        	System.out.println(p.toString());
+        }
         LifeCoachDao.instance.closeConnections(em);
         return list;
     }
