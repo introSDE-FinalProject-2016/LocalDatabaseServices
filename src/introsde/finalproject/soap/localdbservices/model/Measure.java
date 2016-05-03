@@ -231,6 +231,7 @@ public class Measure implements Serializable {
 		query.setParameter(2, md);
 		query.setParameter(3, mid);
 		Measure measure = query.getSingleResult();
+		System.out.println(measure.toString());
 		LifeCoachDao.instance.closeConnections(em);
 		return measure;
 	}
