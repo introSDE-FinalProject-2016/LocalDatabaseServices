@@ -34,6 +34,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 			+ "FROM Measure h "
 			+ "WHERE h.person = ?1 "
 			+ "GROUP BY h.measureDefinition)"),
+	@NamedQuery(name="Person.currentGoal", query="SELECT g FROM Goal g WHERE g.startDateGoal IN "
+			+ "(SELECT MAX(h.startDateGoal) "
+			+ "FROM Goal h "
+			+ "WHERE h.person = ?1 "
+			+ "GROUP BY h.measureDefinition)"),		
 })
 @XmlType(propOrder={"idPerson", "firstname", "lastname" , "birthdate", "email", "gender", "measure", "goal"})
 @XmlAccessorType(XmlAccessType.NONE)
@@ -121,7 +126,8 @@ public class Person implements Serializable{
 	@XmlElementWrapper(name = "goals")
 	@XmlElement(name = "goal")
 	public List<Goal> getGoal() {
-		return goal;
+		//return goal;
+		return this.getQueryCurrentGoal();
 	}
 
 	// Setters methods
@@ -222,4 +228,13 @@ public class Person implements Serializable{
 	    
 	}
     
+    public List<Goal> getQueryCurrentGoal() {
+		EntityManager em = LifeCoachDao.instance.createEntityManager();
+	    List<Goal> listCurrentGoal = em.createNamedQuery("Person.currentGoal", Goal.class)
+	    		.setParameter(1, this)
+	    		.getResultList();
+	    LifeCoachDao.instance.closeConnections(em);
+	    return listCurrentGoal;
+	    
+	}
 }
