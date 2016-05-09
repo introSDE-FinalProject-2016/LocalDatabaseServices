@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Wrapper used when are listened the goals of all the Goal
  *
  */
-@XmlRootElement(name="goals")
+@XmlRootElement(name="Goals")
 public class GoalWrapper {
 
 	@XmlElement(name="goal")

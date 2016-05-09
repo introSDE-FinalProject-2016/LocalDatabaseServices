@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Wrapper used when are listened the measure of all the Measure
  *
  */
-@XmlRootElement(name="healthProfile-history")
+@XmlRootElement(name="HealthProfile-history")
 public class MeasureWrapper {
 
 	@XmlElement(name="measure")

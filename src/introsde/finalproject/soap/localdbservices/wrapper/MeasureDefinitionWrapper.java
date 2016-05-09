@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Wrapper used when are listened the measureName of all the MeasureDefinition
  *
  */
-@XmlRootElement(name="measureNames")
+@XmlRootElement(name="MeasureNames")
 public class MeasureDefinitionWrapper {
 	
 	@XmlElement(name="measureName")

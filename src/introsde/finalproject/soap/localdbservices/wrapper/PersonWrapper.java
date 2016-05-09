@@ -15,7 +15,7 @@ import introsde.finalproject.soap.localdbservices.model.Person;
  * Wrapper used when are listened the people of all the Person
  *
  */
-@XmlRootElement(name="people")
+@XmlRootElement(name="People")
 public class PersonWrapper {
 	
 	@XmlElement(name="person")
