@@ -1,7 +1,7 @@
 # LocalDatabaseService
 The Local Database Service is a SOAP Web Service. This layer sits on top of a database in order to provide data to the [Storage Services](https://github.com/introSDE-FinalProject-2016/StorageServices). It's responsible for handling all persistence tasks on the database.
 
-[API Documentation](http://docs.localdatabaseservice1.apiary.io/#)  
+[API Documentation](http://docs.localdatabaseservices.apiary.io/#)  
 [URL Client](https://github.com/introSDE-FinalProject-2016/Telegram-Bot)  
 [URL Server (heroku)](https://nameless-reaches-22539.herokuapp.com/ws/people)  
 [WSDL File](https://nameless-reaches-22539.herokuapp.com/ws/people?wsdl) 
