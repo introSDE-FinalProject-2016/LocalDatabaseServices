@@ -17,7 +17,7 @@ In order to execute this server locally you need the following technologies:
 Then, clone the repository. Run in your terminal:
 
 ```
-$ git clone like https://github.com/yuly-sanchez/LocalDatabaseServices.git
+$ git clone like https://github.com/introSDE-FinalProject-2016/LocalDatabaseServices.git
 $ cd LocalDatabaseServices
 ```
 
