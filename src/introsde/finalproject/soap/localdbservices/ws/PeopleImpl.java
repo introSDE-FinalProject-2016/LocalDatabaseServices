@@ -210,17 +210,7 @@ public class PeopleImpl implements People {
 						+ idPerson);
 				return -2;
 			}
-			/*
-			 * String result = ""; Person p = Person.getPersonById(idPerson); if
-			 * (p != null) { if (!p.getMeasure().isEmpty()) { for (int i = 0; i
-			 * < p.getMeasure().size(); i++) {
-			 * Measure.removeMeasure(p.getMeasure().get(i)); }
-			 * Person.removePerson(p); result = "Person with id: " + idPerson +
-			 * " deleted with his/her measures"; return result; }
-			 * Person.removePerson(p); result = "Person with id: " + idPerson +
-			 * " deleted"; return result; } else { result = "Person with id: " +
-			 * idPerson + " not found!"; return result; }
-			 */
+			
 		} catch (Exception e) {
 			System.out.println("Person not deleted due the exception: " + e);
 			return -1;
