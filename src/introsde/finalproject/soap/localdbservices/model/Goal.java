@@ -34,7 +34,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 	@NamedQuery(name = "Goal.findByIdPersonAndIdMeasureDef", query = "SELECT g FROM Goal g WHERE g.person = ?1 AND g.measureDefinition = ?2"),
 	@NamedQuery(name = "Goal.findByIdPerson", query = "SELECT g FROM Goal g WHERE g.person = ?1")
 	})
-@XmlType(propOrder={"idGoal", "type", "value" , "startDateGoal", "endDateGoal", "achieved"})
+@XmlType(propOrder={"idGoal", "type", "value" , "startDateGoal", "endDateGoal", "achieved", "conditionGoal"})
 @XmlAccessorType(XmlAccessType.NONE)
 public class Goal implements Serializable {
 
@@ -65,6 +65,9 @@ public class Goal implements Serializable {
 	@Column(name = "achieved")
 	private Boolean achieved;
 
+	@Column(name = "conditionGoal")
+	private String conditionGoal;
+	
 	@ManyToOne
 	@JoinColumn(name = "idPerson", referencedColumnName = "idPerson")
 	private Person person;
@@ -115,6 +118,11 @@ public class Goal implements Serializable {
 		return achieved;
 	}
 
+	@XmlElement(name="condition")
+	public String getConditionGoal() {
+		return conditionGoal;
+	}
+	
 	// We make this transient for JAXB to avoid and infinite loop on
 	// serialization
 	@XmlTransient
@@ -151,6 +159,10 @@ public class Goal implements Serializable {
 		this.achieved = achieved;
 	}
 
+	public void setConditionGoal(String conditionGoal) {
+		this.conditionGoal = conditionGoal;
+	}
+
 	public void setPerson(Person person) {
 		this.person = person;
 	}
@@ -162,7 +174,7 @@ public class Goal implements Serializable {
 	public String toString() {
 		return "Goal ( " + idGoal + ", " + value + ", "
 				+ type + ", " + startDateGoal + ", " 
-				+ endDateGoal + ", "+ achieved + " )";
+				+ endDateGoal + ", "+ achieved + ", " + conditionGoal + " )";
 	}
 	
 	// Database operations
