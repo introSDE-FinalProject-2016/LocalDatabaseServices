@@ -12,7 +12,10 @@ import introsde.finalproject.soap.localdbservices.wrapper.PersonWrapper;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
 import javax.jws.WebService;
+
+import org.apache.commons.lang3.time.DateUtils;
 
 
 /**
@@ -238,7 +241,8 @@ public class PeopleImpl implements People {
 			System.out.println("--> REQUESTED: createGoal(" + goal.getType()
 					+ ", " + idPerson + ") in Local Database Services");
 			String goalType = goal.getType();
-
+			Calendar today = Calendar.getInstance(); 
+			
 			// searches the measure definition associated with the name of
 			// the measure
 			MeasureDefinition temp = new MeasureDefinition();
@@ -250,6 +254,22 @@ public class PeopleImpl implements People {
 			if (p != null) {
 				System.out.println("Found Person by id = " + idPerson + " => "
 						+ p.getIdPerson());
+				
+				if (goal.getStartDateGoal() == null) {
+					goal.setStartDateGoal(today.getTime());
+				}
+				if(goal.getEndDateGoal() == null){
+					if(goalType.equals("sleep") || goalType.equals("steps") || goalType.equals("water")){
+						goal.setEndDateGoal(DateUtils.addDays(today.getTime(), 1));
+					}else if(goalType.equals("height")){
+						goal.setEndDateGoal(DateUtils.addYears(today.getTime(), 1));
+					}else {
+						goal.setEndDateGoal(DateUtils.addMonths(today.getTime(), 1));
+					}
+				}
+				if(goal.getAchieved() == null){
+					goal.setAchieved(false);
+				}
 				goal.setPerson(p);
 				goal.setMeasureDefinition(temp);
 
@@ -266,7 +286,8 @@ public class PeopleImpl implements People {
 			return -1;
 		}
 	}
-
+	
+	
 	/**
 	 * Method #2: getGoal(int idPerson, int idMeasureDefinition) =>
 	 * List<Goal> This method retrieve information about goal for a specified
@@ -369,6 +390,10 @@ public class PeopleImpl implements People {
 				if (goal.getAchieved() == null) {
 					goal.setAchieved(existing.getAchieved());
 				}
+				if (goal.getConditionGoal() == null) {
+					goal.setConditionGoal(existing.getConditionGoal());
+				}
+				
 				goal.setPerson(existing.getPerson());
 				goal.setMeasureDefinition(existing.getMeasureDefinition());
 
